@@ -129,6 +129,16 @@
           "widget": null,
           "validations": [
             {
+              "type": "is greater than",
+              "message": "Ensure this value is greater than or equal to 0 characters",
+              "value": 0
+            },
+            {
+              "type": "is less than",
+              "message": "Ensure this value is less than or equal to 32767 characters",
+              "value": 32767
+            },
+            {
               "type": "is present",
               "message": "Ensure this value is not null or not empty"
             }
@@ -985,6 +995,28 @@
           ]
         },
         {
+          "field": "phone_number",
+          "type": "String",
+          "is_filterable": true,
+          "is_sortable": true,
+          "is_read_only": false,
+          "is_required": false,
+          "is_virtual": false,
+          "default_value": null,
+          "integration": null,
+          "reference": null,
+          "inverse_of": null,
+          "relationship": null,
+          "widget": null,
+          "validations": [
+            {
+              "type": "is shorter than",
+              "message": "Ensure this value has at most 100 characters",
+              "value": 100
+            }
+          ]
+        },
+        {
           "field": "is_staff",
           "type": "Boolean",
           "is_filterable": true,
@@ -1370,7 +1402,7 @@
     "liana": "django-forestadmin",
     "liana_version": "1.1.4",
     "stack": {
-      "database_type": "sqlite",
+      "database_type": "postgresql",
       "orm_version": "3.2.6"
     }
   }

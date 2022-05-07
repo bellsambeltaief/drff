@@ -33,6 +33,7 @@ class RegistrationAPI(generics.GenericAPIView):
         user.first_name = request.data['first_name']
         user.last_name = request.data['last_name']
         user.address = request.data['address']
+        user.phone_number = request.data['phone_number']
         user.save()
         return Response({"user": UserSerializer(user, context=self.get_serializer_context()).data})
 

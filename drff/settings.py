@@ -87,7 +87,7 @@ AUTH_USER_MODEL = 'accounts.User'
 DATABASES = {
     'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Shopy',
+        'NAME': 'django_db',
         'USER': 'postgres',
         'PASSWORD': 'balsem',
         'HOST': 'localhost',
