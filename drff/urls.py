@@ -25,7 +25,7 @@ urlpatterns = [
 
     path('api/v1/', include(arg=[
         path('', include('accounts.urls')),
-        path('produit/', include('produit.urls')),
+        path('product/', include('produit.urls')),
         path('vendeur/', include('vendeur.urls')),
     ])),
 

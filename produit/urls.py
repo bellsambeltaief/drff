@@ -1,9 +1,16 @@
 from django.urls import path, include
-from .api import ProduitCreateApi , ProduitApi , ProduitUpdateApi , ProduitDeleteApi
+from .api import *
 
 urlpatterns = [
-    path('api/create',ProduitCreateApi.as_view()),
-     path('api/view',ProduitApi.as_view()),
-     path('api/<int:pk>',ProduitUpdateApi.as_view()),
-     path('api/<int:pk>/delete',ProduitDeleteApi.as_view()),
+    path('create-product/',ProduitCreateApi.as_view()),
+     path('view-product/',ProduitApi.as_view()),
+     path('/update-product/<int:pk>',ProduitUpdateApi.as_view()),
+     path('<int:pk>/delete',ProduitDeleteApi.as_view()),
+
+     path('add-product-to-cart/',AddProductToCartAPI.as_view()),
+     path('remove-product-from-cart/',RemoveProductToCartAPI.as_view()),
+
+     path('create-order/',CreateOrderAPI.as_view()),
+
+     
 ]
