@@ -1,10 +1,12 @@
 from datetime import datetime
+from inspect import stack
 from rest_framework import generics,status,permissions
 from rest_framework.response import Response
 from django.http import Http404, JsonResponse
 from .serializer import *
 from .models import *
-
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 class ProduitCreateApi(generics.CreateAPIView):
@@ -95,25 +97,53 @@ class CreateOrderAPI(generics.CreateAPIView):
                     status=status.HTTP_200_OK
                 )
         else:
-            return JsonResponse(
+            return Response(
+                {'msg': "order does not exists"},
+                status=status.HTTP_200_OK
+                )
+
+    def patch(self, request, *args, **kwargs):
+        user = request.user
+        if Order.objects.filter(user=user).filter(ordered=False).exists():
+            order = Order.objects.filter(user=user).filter(ordered=False).first()
+            if order.ordered == False:
+                order.ordered = True
+                order.status =  "Pending"
+                order.save()
+
+                email_message      = 'Bonjour' +' ' +user.email + '\n votre commande est en cours de preparation\n' +"N° commande: " +order.ref_code + '\n\nMerci d utiliser notre site!'
+                from_email      = settings.DEFAULT_FROM_EMAIL
+                to_email        = [order.user.email]
+                email_subject   = 'Confirmation de commande'
+                send_mail(
+                    email_subject,
+                    email_message,           
+                    from_email,
+                    to_email,
+                    fail_silently=False,
+                )
+                return Response(
+                {'msg': "order status updated"},
+                status=status.HTTP_200_OK
+                )
+
+            else:
+                return JsonResponse(
                     {
-                        "order does not exist"
+                        'msg': "Order already confirmed",
+                        "order_status":order.status,
                     },
                     status=status.HTTP_200_OK
+                )
+        else:
+            return Response(
+                {'msg': "order does not exists"},
+                status=status.HTTP_200_OK
                 )
 
 
 
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        order_details = Order.objects.filter(user=user).filter(ordered=False)
-        return JsonResponse(
-                {
-                    'msg': "Order already exists",
-                    "order_total_price":str(order_details.get_total()) +" Dinars"
-                },
-                status=status.HTTP_200_OK
-            )
+
 
     def post(self, request, *args, **kwargs):
         user = request.user
