@@ -1,7 +1,7 @@
 from datetime import datetime
 from rest_framework import generics,status,permissions
 from rest_framework.response import Response
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from .serializer import *
 from .models import *
 
@@ -78,17 +78,53 @@ class CreateOrderAPI(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = CreateOrderSerilizer
 
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if Order.objects.filter(user=user).filter(ordered=False).exists():
+            order_details = Order.objects.filter(user=user).filter(ordered=False).first()                
+            return JsonResponse(
+                    {
+                        "order_ref_code":order_details.ref_code,
+                        "order_start_date":order_details.start_date,
+                        "order_shipping_address":order_details.shipping_address,
+                        "order_status":order_details.status,
+                        "order_ref_code":order_details.ref_code,
+                        "order_ordered_date":order_details.ordered_date,
+                        "order_total_price":str(order_details.get_total()) +" Dinars"
+                    },
+                    status=status.HTTP_200_OK
+                )
+        else:
+            return JsonResponse(
+                    {
+                        "order does not exist"
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+
+
     def post(self, request, *args, **kwargs):
         user = request.user
         order_details = Order.objects.filter(user=user).filter(ordered=False)
-
+        return JsonResponse(
+                {
+                    'msg': "Order already exists",
+                    "order_total_price":str(order_details.get_total()) +" Dinars"
+                },
+                status=status.HTTP_200_OK
+            )
 
     def post(self, request, *args, **kwargs):
         user = request.user
 
         if Order.objects.filter(user=user).filter(ordered=False).exists():
-            return Response(
-                {'msg': "Order already exists"},
+            order = Order.objects.filter(user=user).filter(ordered=False).first()
+            return JsonResponse(
+                {
+                    'msg': "Order already exists",
+                    "order_total_price":str(order.get_total()) +" Dinars"
+                },
                 status=status.HTTP_200_OK
             )
         else:
@@ -107,6 +143,9 @@ class CreateOrderAPI(generics.CreateAPIView):
                 order.items.add(order_item)
 
             order.save()
-            return Response(
-                {'msg': "Order created"},
+            return JsonResponse(
+                {
+                    'msg': "Order created",
+                    "order_total_price":str(order.get_total()) +" Dinars"
+                },
                 status=status.HTTP_200_OK)
