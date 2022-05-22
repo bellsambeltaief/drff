@@ -179,3 +179,6 @@ class CreateOrderAPI(generics.CreateAPIView):
                     "order_total_price":str(order.get_total()) +" Dinars"
                 },
                 status=status.HTTP_200_OK)
+
+
+

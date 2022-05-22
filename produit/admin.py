@@ -6,4 +6,6 @@ from produit.models import *
 admin.site.register(Produit)
 admin.site.register(OrderItem)
 admin.site.register(Order)
+admin.site.register(WishlistItem)
+admin.site.register(Wishlist)
 admin.site.register(Coupon)
