@@ -105,7 +105,7 @@ class WishlistItem(models.Model):
 
 class Wishlist(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    items = models.ManyToManyField(OrderItem)
+    items = models.ManyToManyField(WishlistItem)
     is_confirmed = models.BooleanField(default=False)
 
     def __str__(self):

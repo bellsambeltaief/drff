@@ -1481,23 +1481,6 @@
           "widget": null
         },
         {
-          "field": "wishlist_set",
-          "type": [
-            "Number"
-          ],
-          "is_filterable": false,
-          "is_sortable": true,
-          "is_read_only": false,
-          "is_required": false,
-          "is_virtual": false,
-          "default_value": null,
-          "integration": null,
-          "reference": "produit_wishlist.id",
-          "inverse_of": "items",
-          "relationship": "HasMany",
-          "widget": null
-        },
-        {
           "field": "id",
           "type": "Number",
           "is_filterable": true,
@@ -1961,6 +1944,23 @@
       "segments": [],
       "fields": [
         {
+          "field": "wishlist_set",
+          "type": [
+            "Number"
+          ],
+          "is_filterable": false,
+          "is_sortable": true,
+          "is_read_only": false,
+          "is_required": false,
+          "is_virtual": false,
+          "default_value": null,
+          "integration": null,
+          "reference": "produit_wishlist.id",
+          "inverse_of": "items",
+          "relationship": "HasMany",
+          "widget": null
+        },
+        {
           "field": "id",
           "type": "Number",
           "is_filterable": true,
@@ -2080,7 +2080,7 @@
           "widget": null
         },
         {
-          "field": "orderitem",
+          "field": "wishlistitem",
           "type": "Number",
           "is_filterable": true,
           "is_sortable": true,
@@ -2089,7 +2089,7 @@
           "is_virtual": false,
           "default_value": null,
           "integration": null,
-          "reference": "produit_orderitem.id",
+          "reference": "produit_wishlistitem.id",
           "inverse_of": "Wishlist_items+",
           "relationship": "BelongsTo",
           "widget": null
@@ -2165,7 +2165,7 @@
           "is_virtual": false,
           "default_value": null,
           "integration": null,
-          "reference": "produit_orderitem.id",
+          "reference": "produit_wishlistitem.id",
           "inverse_of": "wishlist_set",
           "relationship": "HasMany",
           "widget": null

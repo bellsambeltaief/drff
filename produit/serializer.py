@@ -23,4 +23,13 @@ class CreateOrderSerilizer(serializers.ModelSerializer):
         fields = ['id']      
 
 
-        
+class AddProductToWishlistSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model = WishlistItem
+        fields = ['item','quantity']
+
+
+class CreateWishlistSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model = Wishlist
+        fields = ['id']  

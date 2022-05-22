@@ -143,8 +143,6 @@ class CreateOrderAPI(generics.CreateAPIView):
 
 
 
-
-
     def post(self, request, *args, **kwargs):
         user = request.user
 
@@ -182,3 +180,120 @@ class CreateOrderAPI(generics.CreateAPIView):
 
 
 
+class AddProductToWishlistAPI(generics.CreateAPIView):
+    """ endpoint to add a product to wishlist"""
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = AddProductToWishlistSerilizer
+
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        item = request.data["item"]
+        new_quantity = request.data["quantity"]
+        if WishlistItem.objects.filter(user=user).filter(item=item).exists():
+            WishlistItem.objects.filter(user=user).filter(item=item).filter(is_confirmed=False).update(
+                quantity=new_quantity
+            )
+            updated_item = WishlistItem.objects.filter(user=user).filter(item=item).filter(is_confirmed=False).first()
+        else:
+            updated_item = WishlistItem.objects.create(
+                user=user,
+                item=Produit.objects.filter(id=item).first(),
+                quantity=new_quantity
+            )
+        if Wishlist.objects.filter(user=user).filter(is_confirmed=False).exists():
+            wishlist = Wishlist.objects.filter(user=user).filter(is_confirmed=False).first()
+            wishlist.items.add(updated_item)
+        return Response(
+            {'msg': "item added to wishlist"},
+            status=status.HTTP_200_OK)
+
+    
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        if (
+            "item" not in request.data
+        ):
+            return Response(
+                {'msg': "Item details are missing"},
+                status=status.HTTP_404_NOT_FOUND)
+        else:
+            item = request.data["item"]
+
+            if WishlistItem.objects.filter(user=user).filter(item=item).filter(is_confirmed=False).exists():
+                wishlist = WishlistItem.objects.filter(user=user).filter(item=item).filter(is_confirmed=False).first()
+                wishlist.delete()
+                return Response(
+                    {
+                        'msg': "item removed from wishlist"
+                    },
+                    status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                {'msg': "item does not exist to the wishlist"},
+                status=status.HTTP_404_NOT_FOUND)
+
+
+class CreateWishlistAPI(generics.CreateAPIView):
+    """ endpoint to create an order"""
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = CreateWishlistSerilizer
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if Wishlist.objects.filter(user=user).filter(is_confirmed=False).exists():
+            reponse_data = []
+            wishlist_details = Wishlist.objects.filter(user=user).filter(is_confirmed=False).first()     
+            for item in wishlist_details.items.all():
+                item_detail = {
+                    "prod_name":item.item.prod_name,
+                    "price":str(item.item.price) +" Dinars",
+                    "category":item.item.category,
+                    "category":item.item.category,
+                    "image" :"http://localhost:8000"+ str(item.item.image.url) if item.item.image else "None",
+                }
+                reponse_data.append(item_detail)
+
+            return JsonResponse(
+                    {
+                        "wishlist_total_price":str(wishlist_details.get_total()) +" Dinars",
+                        "wishlist":reponse_data,
+                    },
+                    status=status.HTTP_200_OK
+                )
+        else:
+            return Response(
+                {'msg': "wishlist does not exists"},
+                status=status.HTTP_200_OK
+                )
+
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        if Wishlist.objects.filter(user=user).filter(is_confirmed=False).exists():
+            wishlist = Wishlist.objects.filter(user=user).filter(is_confirmed=False).first()
+            return JsonResponse(
+                {
+                    'msg': "Wishlist already exists",
+                },
+                status=status.HTTP_200_OK
+            )
+        else:
+            Wishlist.objects.create(
+                user=user,
+            )
+            wishlist_item_list = WishlistItem.objects.filter(user=user).filter(is_confirmed=False)
+            wishlist = Wishlist.objects.filter(user=user).filter(is_confirmed=False).first()
+
+            for order_item in wishlist_item_list:
+                wishlist.items.add(order_item)
+
+            wishlist.save()
+            return JsonResponse(
+                {
+                    'msg': "Order created",
+                    "wishlist_total_price":str(wishlist.get_total()) +" Dinars"
+                },
+                status=status.HTTP_200_OK)
