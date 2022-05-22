@@ -1041,6 +1041,32 @@
           ]
         },
         {
+          "field": "account_type",
+          "type": "Enum",
+          "is_filterable": true,
+          "is_sortable": true,
+          "is_read_only": false,
+          "is_required": false,
+          "is_virtual": false,
+          "default_value": "User",
+          "integration": null,
+          "reference": null,
+          "inverse_of": null,
+          "relationship": null,
+          "widget": null,
+          "validations": [
+            {
+              "type": "is shorter than",
+              "message": "Ensure this value has at most 50 characters",
+              "value": 50
+            }
+          ],
+          "enums": [
+            "User",
+            "Vender"
+          ]
+        },
+        {
           "field": "is_staff",
           "type": "Boolean",
           "is_filterable": true,

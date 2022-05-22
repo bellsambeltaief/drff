@@ -8,7 +8,10 @@ import random
 
 # Create your models here.
 #testing
-
+ACCOUNT_TYPE = (
+    ('User', 'User'),
+    ('Vender', 'Vender'),
+)
 class User(AbstractBaseUser,PermissionsMixin):
 
     username = models.CharField(max_length=30,null=True,blank=True)
@@ -20,6 +23,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     last_name = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=100, blank=True, null=True)
     address = models.CharField(max_length=100, blank=True, null=True)
+    account_type = models.CharField(max_length=50,choices=ACCOUNT_TYPE,default="User")
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)

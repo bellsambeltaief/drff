@@ -8,7 +8,6 @@ from django.core.mail import send_mail
 
 
 
-
 class LoginAPIView(generics.GenericAPIView):
     serializer_class = LoginSerializer
     permission_classes = [
@@ -33,6 +32,7 @@ class RegistrationAPI(generics.GenericAPIView):
         user.last_name = request.data['last_name']
         user.address = request.data['address']
         user.phone_number = request.data['phone_number']
+        user.account_type = request.data['account_type']
         user.save()
         return Response({"user": UserSerializer(user, context=self.get_serializer_context()).data})
 

@@ -8,7 +8,7 @@ from accounts.models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("email", "first_name", "last_name","address","phone_number")
+        fields = ("email", "first_name", "last_name","address","phone_number","account_type")
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -34,7 +34,8 @@ class LoginSerializer(serializers.ModelSerializer):
             'first_name':user.first_name,
             'last_name':user.last_name,
             'address':user.address,
-            'phone_number':user.phone_number
+            'phone_number':user.phone_number,
+            'account_type':user.account_type,
 
         }
     class Meta:
@@ -66,7 +67,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
     class Meta:
         model = User
-        fields = ('email','first_name','last_name','address', 'password','confirm_password',"phone_number")
+        fields = ('email','first_name','last_name','address', 'password','confirm_password',"phone_number","account_type")
         extra_kwargs = {
             'password': {'write_only': True},
             }
