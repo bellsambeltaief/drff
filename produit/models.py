@@ -119,3 +119,12 @@ class Wishlist(models.Model):
         for order_item in self.items.all():
             total += order_item.get_total_item_price()
         return total
+
+
+class Rating(models.Model):
+    user = models.ForeignKey(User,null=False,blank=False,on_delete=models.CASCADE)
+    product =  models.ForeignKey(Produit,null=False,blank=False,on_delete=models.CASCADE)
+    value  = models.CharField(max_length=5,null=False,blank=False)
+
+    def __str__(self):
+        return f"{self.product} has rating of {self.value} stars"
