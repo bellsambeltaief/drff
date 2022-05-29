@@ -1,5 +1,7 @@
 from datetime import datetime
 from inspect import stack
+
+from numpy import product
 from rest_framework import generics,status,permissions
 from rest_framework.response import Response
 from django.http import Http404, JsonResponse
@@ -84,7 +86,6 @@ class GetProductByVendorIdAPI(generics.CreateAPIView):
     http_method_names = ["get"]  # 'post', 'head', 'put', 'patch'
 
     def get(self, request, *args, **kwargs):
-        user = request.user
         if (
             "vendor_id" not in request.query_params
             or self.request.query_params.get("vendor_id") == ""
@@ -97,7 +98,69 @@ class GetProductByVendorIdAPI(generics.CreateAPIView):
             return Response(
                 data=dict(queryset=product_list_serializer.data),
                 status=status.HTTP_200_OK
+            )
+
+
+class GetProductRatingAPI(generics.CreateAPIView):
+    """ endpoint to get a product by the vendor id """
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = GetProductRatingSerilizer
+    http_method_names = ["get","post"]  # 'post', 'head', 'put', 'patch'
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if (
+            "product_id" not in request.query_params
+            or self.request.query_params.get("product_id") == ""
+        ):
+            raise APIHttp400(detail={"errors": {"product_id": "Parameter is missing"}})
+        else:
+            product_id = self.request.query_params.get("product_id")
+            rating_list = Rating.objects.filter(product=product_id)
+            product_rating_list_serializer =  self.serializer_class(rating_list, many=True)
+            return Response(
+                data=dict(queryset=product_rating_list_serializer.data),
+                status=status.HTTP_200_OK
                 )
+    def post(self, request, *args, **kwargs):
+
+        if (
+            "product_id" not in request.data
+            or self.request.data.get("product_id") == ""
+        ):
+            raise APIHttp400(detail={"errors": {"product_id": "Parameter is missing"}})
+
+        if (
+            "rating" not in request.data
+            or self.request.data.get("rating") == ""
+        ):
+            raise APIHttp400(detail={"errors": {"rating": "Parameter is missing"}})
+
+
+        user = request.user
+        product_id = request.data["product_id"]
+        rating = request.data["rating"]
+
+        if Rating.objects.filter(user=user).filter(product_id=product_id).exists():
+            raise APIHttp400(detail={"errors": "You have already submitted a rating review for this product"})
+        else:
+            if Produit.objects.filter(id=product_id).exists():
+                produit = Produit.objects.filter(id=product_id).first()
+            else:
+                raise APIHttp400(detail={"errors": {"product": "Product does not exist"}})
+
+            Rating.objects.create(
+                user=user,
+                product=produit,
+                rating=rating
+            )
+            return Response(
+                {'msg': "Rating review saved"},
+                status=status.HTTP_200_OK
+                )
+        
+
+
 
 
 

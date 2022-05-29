@@ -33,3 +33,23 @@ class CreateWishlistSerilizer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
         fields = ['id']  
+
+
+
+class GetProductRatingSerilizer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField("get_product_rating_stars")
+    user = serializers.SerializerMethodField("get_product_rating_user")
+    product = serializers.SerializerMethodField("get_product_name")
+
+    def get_product_rating_stars(self, obj):
+        return f"{obj.rating} stars" 
+
+    def get_product_rating_user(self, obj):
+        return obj.user.email
+
+    def get_product_name(self, obj):
+        return obj.product.prod_name
+        
+    class Meta:
+        model = Rating
+        exclude = ['id']

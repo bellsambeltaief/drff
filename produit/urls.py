@@ -17,6 +17,8 @@ urlpatterns = [
 
     path('get-product-by-vendor/',GetProductByVendorIdAPI.as_view()),
 
+    path('create-product-rating/',GetProductRatingAPI.as_view()),
+
 
 
     
