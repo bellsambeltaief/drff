@@ -139,10 +139,13 @@ class GetProductRatingAPI(generics.CreateAPIView):
         ):
             raise APIHttp400(detail={"errors": {"rating": "Parameter is missing"}})
 
-
         user = request.user
         product_id = request.data["product_id"]
         rating = request.data["rating"]
+
+        if int(rating) >= 6:
+            raise APIHttp400(detail={"errors": {"rating": "Rating value should be between 0 and 5"}})
+
 
         if Rating.objects.filter(user=user).filter(product_id=product_id).exists():
             raise APIHttp400(detail={"errors": "You have already submitted a rating review for this product"})
