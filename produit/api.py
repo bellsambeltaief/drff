@@ -10,6 +10,7 @@ from .models import *
 from django.conf import settings
 from django.core.mail import send_mail
 from rest_framework.exceptions import APIException
+from rest_framework import filters
 
 
 class ProduitCreateApi(generics.CreateAPIView):
@@ -20,6 +21,8 @@ class ProduitApi(generics.ListAPIView):
     queryset = Produit.objects.all()
     serializer_class = ProduitSerializer
     permission_classes = (permissions.AllowAny,)
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['prod_name','category']
     
 
 class ProduitUpdateApi(generics.RetrieveUpdateAPIView):
