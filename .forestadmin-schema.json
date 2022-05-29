@@ -800,6 +800,23 @@
           "widget": null
         },
         {
+          "field": "produit_set",
+          "type": [
+            "Number"
+          ],
+          "is_filterable": false,
+          "is_sortable": true,
+          "is_read_only": false,
+          "is_required": false,
+          "is_virtual": false,
+          "default_value": null,
+          "integration": null,
+          "reference": "produit_produit.id",
+          "inverse_of": "vender",
+          "relationship": "HasMany",
+          "widget": null
+        },
+        {
           "field": "orderitem_set",
           "type": [
             "Number"
@@ -1325,6 +1342,21 @@
           "reference": null,
           "inverse_of": null,
           "relationship": null,
+          "widget": null
+        },
+        {
+          "field": "vender",
+          "type": "Number",
+          "is_filterable": true,
+          "is_sortable": true,
+          "is_read_only": false,
+          "is_required": false,
+          "is_virtual": false,
+          "default_value": null,
+          "integration": null,
+          "reference": "accounts_user.id",
+          "inverse_of": "produit_set",
+          "relationship": "BelongsTo",
           "widget": null
         },
         {

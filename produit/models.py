@@ -24,6 +24,7 @@ ORDER_STATUS = (
 )
 
 class Produit(models.Model):
+    vender = models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
     prod_name = models.CharField(max_length=255,null=False, blank=False)
     price = models.FloatField(null=True, blank=True)
     category = models.CharField(max_length=50,choices=CATEGORY_CHOICES,null=True, blank=True)

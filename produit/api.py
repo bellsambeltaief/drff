@@ -7,6 +7,7 @@ from .serializer import *
 from .models import *
 from django.conf import settings
 from django.core.mail import send_mail
+from rest_framework.exceptions import APIException
 
 
 class ProduitCreateApi(generics.CreateAPIView):
@@ -16,6 +17,8 @@ class ProduitCreateApi(generics.CreateAPIView):
 class ProduitApi(generics.ListAPIView):
     queryset = Produit.objects.all()
     serializer_class = ProduitSerializer
+    permission_classes = (permissions.AllowAny,)
+    
 
 class ProduitUpdateApi(generics.RetrieveUpdateAPIView):
     queryset = Produit.objects.all()
@@ -72,6 +75,29 @@ class RemoveProductToCartAPI(generics.CreateAPIView):
                 {'msg': "item doesn't exist to any cart"},
                 status=status.HTTP_200_OK
             )
+
+
+class GetProductByVendorIdAPI(generics.CreateAPIView):
+    """ endpoint to get a product by the vendor id """
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = ProduitSerializer
+    http_method_names = ["get"]  # 'post', 'head', 'put', 'patch'
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if (
+            "vendor_id" not in request.query_params
+            or self.request.query_params.get("vendor_id") == ""
+        ):
+            raise APIHttp400(detail={"errors": {"vendor_id": "Parameter is missing"}})
+        else:
+            vendor_id = self.request.query_params.get("vendor_id")
+            product_list = Produit.objects.filter(vender=vendor_id)
+            product_list_serializer =  self.serializer_class(product_list, many=True)
+            return Response(
+                data=dict(queryset=product_list_serializer.data),
+                status=status.HTTP_200_OK
+                )
 
 
 
@@ -297,3 +323,11 @@ class CreateWishlistAPI(generics.CreateAPIView):
                     "wishlist_total_price":str(wishlist.get_total()) +" Dinars"
                 },
                 status=status.HTTP_200_OK)
+
+
+
+
+class APIHttp400(APIException):
+    """API Http 400 Error"""
+
+    status_code = 400

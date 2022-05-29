@@ -15,6 +15,8 @@ urlpatterns = [
     path('add-product-to-wishlist/',AddProductToWishlistAPI.as_view()),
     path('create-wishlist/',CreateWishlistAPI.as_view()),
 
+    path('get-product-by-vendor/',GetProductByVendorIdAPI.as_view()),
+
 
 
     
