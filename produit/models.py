@@ -28,6 +28,7 @@ class Produit(models.Model):
     prod_name = models.CharField(max_length=255,null=False, blank=False)
     price = models.FloatField(null=True, blank=True)
     category = models.CharField(max_length=50,choices=CATEGORY_CHOICES,null=True, blank=True)
+    quantity = models.CharField(max_length=255,null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     image = models.ImageField(null=True, blank=True,upload_to="product_images/")
     created_at = models.DateTimeField(auto_now=True)
